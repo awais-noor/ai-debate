@@ -54,7 +54,7 @@ def slugify(s: str) -> str:
 
 def calculate_words_per_turn(time_per_turn: int) -> int:
     """Calculate target words based on time (120-125 words per minute)"""
-    return int(time_per_turn * 130)
+    return int(time_per_turn * 125)
 
 
 def generate_debate_script(topic: str, turns: int, words_per_turn: int):
@@ -70,7 +70,7 @@ You are an expert debate script generator that creates high-quality, academicall
 ### Format Specifications
 - Generate exactly {turns} rounds of debate
 - Each debater gets exactly 1 minute speaking time per turn
-- Target approximately {words_per_turn} words per response (assuming average speaking pace of 150-180 words/minute)
+- Target approximately {words_per_turn} words per response (assuming average speaking pace of 120-130 words/minute)
 - Maintain strict alternating turns: Agent 1 (Pro) → Agent 2 (Con) → Agent 1 (Pro) → Agent 2 (Con)
 
 ### Content Quality Standards
@@ -217,13 +217,34 @@ Generate exactly {turns} rounds of structured debate. Each round should explore 
         },
         extra_body={
             "search_mode": "academic",
-            "search_recency_filter": "month",  # Focus on recent academic sources
+            "search_depth": "deep",
             "return_citations": True,  # Ensure citations are returned
         },
         web_search_options={
             "search_context_size": "high",
-            "include_domains": ["scholar.google.com", "jstor.org", "pubmed.ncbi.nlm.nih.gov", "nature.com", "science.org"],
+            "include_domains": [
+                    "scholar.google.com", 
+                    "jstor.org", 
+                    "pubmed.ncbi.nlm.nih.gov", 
+                    "nature.com", 
+                    "science.org",
+                    "cambridge.org",
+                    "oxford.org",
+                    "wiley.com",
+                    "springer.com",
+                    "who.int",
+                    "worldbank.org"
+                ],
+                "exclude_domains": [
+                    "wikipedia.org", 
+                    "reddit.com", 
+                    "twitter.com", 
+                    "facebook.com",
+                    "blog.*",
+                    "medium.com"
+                ]
         },
+        max_tokens=4000,
     )
     
     return response.choices[0].message.content
