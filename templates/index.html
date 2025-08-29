@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Debate System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 25px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e1e1;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        textarea {
+            height: 120px;
+            resize: vertical;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            width: 100%;
+            transition: transform 0.2s;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .status {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+            display: none;
+        }
+        
+        .status.show {
+            display: block;
+        }
+        
+        .progress {
+            width: 100%;
+            height: 8px;
+            background: #e1e1e1;
+            border-radius: 4px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        
+        .round-info {
+            margin: 15px 0;
+            padding: 15px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        
+        .download-section {
+            margin-top: 30px;
+            text-align: center;
+            display: none;
+        }
+        
+        .download-section.show {
+            display: block;
+        }
+        
+        .download-btn {
+            background: #28a745;
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            display: inline-block;
+            transition: background 0.3s;
+        }
+        
+        .download-btn:hover {
+            background: #218838;
+        }
+        
+        .script-preview {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 AI Debate System</h1>
+        
+        <form id="debateForm">
+            <div class="form-group">
+                <label for="topic">Debate Topic</label>
+                <textarea 
+                    id="topic" 
+                    name="topic" 
+                    placeholder="Enter your debate topic..."
+                    required
+                ></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="turns">Number of Turns</label>
+                <select id="turns" name="turns" required>
+                    <option value="2">2 Turns</option>
+                    <option value="3" selected>3 Turns</option>
+                    <option value="4">4 Turns</option>
+                    <option value="5">5 Turns</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="timePerTurn">Time per Turn (minutes)</label>
+                <select id="timePerTurn" name="time_per_turn" required>
+                    <option value="1" selected>1 minute</option>
+                    <option value="2">2 minutes</option>
+                    <option value="3">3 minutes</option>
+                    <option value="4">4 minutes</option>
+                    <option value="5">5 minutes</option>
+                </select>
+            </div>
+            
+            <button type="submit" class="btn" id="startBtn">
+                🚀 Generate Debate
+            </button>
+        </form>
+        
+        <div id="status" class="status">
+            <h3>Status</h3>
+            <div id="statusMessage">Initializing...</div>
+            <div class="progress">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div id="roundsInfo"></div>
+            <div id="scriptPreview" class="script-preview" style="display: none;"></div>
+        </div>
+        
+        <div id="downloadSection" class="download-section">
+            <h3>✅ Debate Generated Successfully!</h3>
+            <p>Your debate audio files are ready for download.</p>
+            <a href="#" id="downloadLink" class="download-btn">
+                📥 Download Debate Audio (ZIP)
+            </a>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('debateForm');
+        const statusDiv = document.getElementById('status');
+        const statusMessage = document.getElementById('statusMessage');
+        const progressBar = document.getElementById('progressBar');
+        const roundsInfo = document.getElementById('roundsInfo');
+        const scriptPreview = document.getElementById('scriptPreview');
+        const startBtn = document.getElementById('startBtn');
+        const downloadSection = document.getElementById('downloadSection');
+        const downloadLink = document.getElementById('downloadLink');
+        
+        let websocket = null;
+        let totalSteps = 0;
+        let currentStep = 0;
+        
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = new FormData(form);
+            const topic = formData.get('topic');
+            const turns = parseInt(formData.get('turns'));
+            const timePerTurn = parseInt(formData.get('time_per_turn'));
+            
+            if (!topic.trim()) {
+                alert('Please enter a debate topic');
+                return;
+            }
+            
+            // Start debate
+            const response = await fetch('/start-debate', {
+                method: 'POST',
+                body: formData
+            });
+            
+            const data = await response.json();
+            startDebateWebSocket(data.debate_id, topic, turns, timePerTurn);
+        });
+        
+        function startDebateWebSocket(debateId, topic, turns, timePerTurn) {
+            statusDiv.classList.add('show');
+            startBtn.disabled = true;
+            roundsInfo.innerHTML = '';
+            scriptPreview.style.display = 'none';
+            downloadSection.classList.remove('show');
+            
+            // Calculate total steps: script generation + (question + 2 agents) per round
+            totalSteps = 1 + (turns * 3);
+            currentStep = 0;
+            updateProgress();
+            
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            websocket = new WebSocket(`${protocol}//${window.location.host}/ws/${debateId}`);
+            
+            websocket.onopen = () => {
+                websocket.send(JSON.stringify({
+                    topic: topic,
+                    turns: turns,
+                    time_per_turn: timePerTurn
+                }));
+            };
+            
+            websocket.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                
+                switch (data.type) {
+                    case 'status':
+                        statusMessage.textContent = data.message;
+                        break;
+                        
+                    case 'script_generated':
+                        currentStep = 1;
+                        updateProgress();
+                        statusMessage.textContent = data.message;
+                        scriptPreview.textContent = JSON.stringify(data.script, null, 2);
+                        scriptPreview.style.display = 'block';
+                        break;
+                        
+                    case 'processing_round':
+                        statusMessage.textContent = data.message;
+                        const roundDiv = document.createElement('div');
+                        roundDiv.className = 'round-info';
+                        roundDiv.innerHTML = `
+                            <h4>Round ${data.round}</h4>
+                            <p><strong>Question:</strong> ${data.question}</p>
+                        `;
+                        roundsInfo.appendChild(roundDiv);
+                        break;
+                        
+                    case 'audio_generated':
+                        currentStep++;
+                        updateProgress();
+                        statusMessage.textContent = data.message;
+                        break;
+                        
+                    case 'round_complete':
+                        statusMessage.textContent = data.message;
+                        break;
+                        
+                    case 'complete':
+                        statusMessage.textContent = data.message;
+                        progressBar.style.width = '100%';
+                        downloadLink.href = data.zip_url;
+                        downloadSection.classList.add('show');
+                        startBtn.disabled = false;
+                        break;
+                        
+                    case 'error':
+                        statusMessage.textContent = `Error: ${data.message}`;
+                        startBtn.disabled = false;
+                        break;
+                }
+            };
+            
+            websocket.onerror = (error) => {
+                statusMessage.textContent = 'Connection error occurred';
+                startBtn.disabled = false;
+            };
+        }
+        
+        function updateProgress() {
+            if (totalSteps > 0) {
+                const percentage = (currentStep / totalSteps) * 100;
+                progressBar.style.width = `${percentage}%`;
+            }
+        }
+    </script>
+</body>
+</html>
